@@ -1,40 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Wallet } from "lucide-react";
+import { useWeb3 } from "../hooks/useWeb3"; // Adjust the path as needed
 
 const Header = ({ setPubAddress }) => {
-  const [account, setAccount] = useState(null);
+  const { account, connectWallet, loading } = useWeb3();
 
-  const connectWallet = async () => {
-    if (window.ethereum) {
-      try {
-        const accounts = await window.ethereum.request({
-          method: "eth_requestAccounts",
-        });
-        setAccount(accounts[0]);
-        localStorage.setItem("connectedAccount", accounts[0]);
-      } catch (error) {
-        console.error("Error connecting to MetaMask:", error);
-      }
-    } else {
-      alert("MetaMask not detected. Please install MetaMask to use this dApp.");
-    }
-  };
-
-  useEffect(() => {
+  // Update parent component whenever account changes
+  React.useEffect(() => {
     if (account) {
-      setPubAddress(account); // This should work if setPubAddress is correctly passed.
+      setPubAddress(account);
+      localStorage.setItem("connectedAccount", account);
     }
   }, [account, setPubAddress]);
 
   return (
     <div className="flex justify-between items-center mb-3 mt-3 p-2">
-      <h1 className="text-3xl font-bold ">NFT Marketplace</h1>
+      <h1 className="text-3xl font-bold">NFT Marketplace</h1>
       <button
         className="flex items-center px-4 py-2 border rounded hover:bg-gray-50"
         onClick={connectWallet}
+        disabled={loading}
       >
         <Wallet className="mr-2 h-4 w-4" />
-        {account
+        {loading
+          ? "Connecting..."
+          : account
           ? `${account.slice(0, 6)}...${account.slice(-4)}`
           : "Connect Wallet"}
       </button>
