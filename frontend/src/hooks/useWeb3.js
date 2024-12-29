@@ -119,11 +119,67 @@ export const useWeb3 = () => {
     };
   }, []);
 
+  // Function to mint NFT
+  const mintNFT = async (tokenURI) => {
+    try {
+      const { nftContract } = contracts;
+      const tx = await nftContract.createToken(tokenURI);
+      await tx.wait();
+      return tx;
+    } catch (error) {
+      console.error("Error minting NFT:", error);
+      throw error;
+    }
+  };
+
+  // Function to list NFT
+  const listNFT = async (tokenId, price) => {
+    try {
+      const { marketplaceContract } = contracts;
+      const priceInWei = ethers.parseEther(price.toString());
+      const listingPrice = await marketplaceContract.getListingPrice();
+
+      const tx = await marketplaceContract.createMarketItem(
+        NFT_COLLECTION_ADDRESS,
+        tokenId,
+        priceInWei,
+        { value: listingPrice }
+      );
+      await tx.wait();
+      return tx;
+    } catch (error) {
+      console.error("Error listing NFT:", error);
+      throw error;
+    }
+  };
+
+  // Function to buy NFT
+  const buyNFT = async (itemId, price) => {
+    try {
+      const { marketplaceContract } = contracts;
+      const priceInWei = ethers.parseEther(price.toString());
+
+      const tx = await marketplaceContract.createMarketSale(
+        NFT_COLLECTION_ADDRESS,
+        itemId,
+        { value: priceInWei }
+      );
+      await tx.wait();
+      return tx;
+    } catch (error) {
+      console.error("Error buying NFT:", error);
+      throw error;
+    }
+  };
+
   return {
     account,
     contracts,
     loading,
     error,
     connectWallet,
+    buyNFT,
+    listNFT,
+    mintNFT,
   };
 };

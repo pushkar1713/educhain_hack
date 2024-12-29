@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { ImagePlus, ShoppingCart, RefreshCw, Search } from "lucide-react";
 import { useWeb3 } from "../hooks/useWeb3";
+// import { uploadToPinata } from "../services/pinataService";
 
 const NFTMarketplace = () => {
   const { account, mintNFT, listNFT, buyNFT, loading, connectWallet } =
@@ -11,29 +12,16 @@ const NFTMarketplace = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [nfts, setNfts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isMinting, setIsMinting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     price: "",
     image: null,
   });
+  const [previewImage, setPreviewImage] = useState(null);
 
-  useEffect(() => {
-    if (!loading) {
-      loadNFTs();
-    }
-  }, [loading, account]);
-
-  const loadNFTs = async () => {
-    try {
-      setIsLoading(true);
-      // Load NFTs logic here - you'll need to implement this based on your contract methods
-      setIsLoading(false);
-    } catch (error) {
-      console.error("Error loading NFTs:", error);
-      setIsLoading(false);
-    }
-  };
+  // ... keep your existing useEffect and loadNFTs functions ...
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -45,10 +33,19 @@ const NFTMarketplace = () => {
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
-    setFormData((prev) => ({
-      ...prev,
-      image: file,
-    }));
+    if (file) {
+      setFormData((prev) => ({
+        ...prev,
+        image: file,
+      }));
+
+      // Create preview URL
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleMintSubmit = async (e) => {
@@ -59,71 +56,45 @@ const NFTMarketplace = () => {
     }
 
     try {
-      const metadataURI = "ipfs://your-metadata-uri"; // Replace with actual IPFS URI
-      const mintTx = await mintNFT(metadataURI);
+      setIsMinting(true);
+
+      // // Upload to Pinata
+      // const { metadataUri } = await uploadToPinata(formData.image, {
+      //   name: formData.name,
+      //   description: formData.description,
+      // });
+
+      // Mint NFT
+      const mintTx = await mintNFT(metadataUri);
       await mintTx.wait();
 
+      // Get token ID from event
       const tokenId = mintTx.events[0].args.tokenId.toNumber();
-      const priceInEth = ethers.utils.parseEther(formData.price.toString());
+
+      // List NFT
+      const priceInEth = ethers.parseEther(formData.price.toString());
       await listNFT(tokenId, priceInEth);
 
+      // Reset form
       setFormData({
         name: "",
         description: "",
         price: "",
         image: null,
       });
+      setPreviewImage(null);
+
+      // Refresh NFTs
       loadNFTs();
+
+      alert("NFT minted and listed successfully!");
     } catch (error) {
       console.error("Error minting NFT:", error);
-      alert("Error minting NFT. See console for details.");
+      alert("Error minting NFT: " + error.message);
+    } finally {
+      setIsMinting(false);
     }
   };
-
-  const handleBuyNFT = async (itemId, price) => {
-    try {
-      await buyNFT(itemId, price);
-      loadNFTs();
-    } catch (error) {
-      console.error("Error buying NFT:", error);
-      alert("Error buying NFT. See console for details.");
-    }
-  };
-
-  const NFTCard = ({ nft }) => (
-    <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-      <div className="p-4">
-        <h3 className="text-lg font-semibold">{nft.name}</h3>
-        <p className="text-gray-600">Collection: {nft.collection}</p>
-      </div>
-      <div className="p-4">
-        <img
-          src={nft.image}
-          alt={nft.name}
-          className="w-full h-48 object-cover rounded-md"
-        />
-        <div className="flex justify-between items-center mt-4">
-          <span className="text-sm text-gray-600">Creator: {nft.creator}</span>
-          <span className="font-bold">
-            {ethers.utils.formatEther(nft.price)} ETH
-          </span>
-        </div>
-      </div>
-      <div className="p-4 border-t flex justify-between">
-        <button className="px-4 py-2 text-sm border rounded hover:bg-gray-50">
-          View Details
-        </button>
-        {nft.seller !== account && (
-          <button
-            onClick={() => handleBuyNFT(nft.itemId, nft.price)}
-            className="px-4 py-2 text-sm bg-blue-600 text-white rounded hover:bg-blue-700"
-          >
-            Buy Now
-          </button>
-        )}
-      </div>
-    </div>
-  );
 
   const MintNFTForm = () => (
     <div className="bg-white rounded-lg shadow-lg p-6 max-w-lg mx-auto">
@@ -178,12 +149,29 @@ const NFTMarketplace = () => {
             className="w-full px-3 py-2 border rounded focus:outline-none focus:border-blue-500"
             required
           />
+          {previewImage && (
+            <div className="mt-2">
+              <img
+                src={previewImage}
+                alt="Preview"
+                className="w-full max-h-48 object-contain rounded-lg"
+              />
+            </div>
+          )}
         </div>
         <button
           type="submit"
-          className="w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+          disabled={isMinting}
+          className={`w-full px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed flex items-center justify-center`}
         >
-          Mint NFT
+          {isMinting ? (
+            <>
+              <RefreshCw className="animate-spin mr-2 h-4 w-4" />
+              Minting...
+            </>
+          ) : (
+            "Mint NFT"
+          )}
         </button>
       </form>
     </div>
