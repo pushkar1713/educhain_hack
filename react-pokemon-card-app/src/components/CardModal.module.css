@@ -1,0 +1,87 @@
+/* CardModal.module.css */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal {
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 600px;
+  width: 100%;
+  position: relative;
+}
+
+.modalContent {
+  display: flex;
+
+  flex-grow: 1;
+}
+
+.modalTitle {
+  color: black;
+  border-bottom: 1px solid gray;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+}
+
+.closeButton {
+  position: absolute;
+  top: 0;
+  right: 4px;
+  background: none;
+  border: none;
+  font-size: 32px;
+  cursor: pointer;
+  color: black;
+}
+
+.cardImage {
+  max-width: 100%;
+  height: auto;
+}
+
+.cardDetails {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin: 40px 20px;
+  color: black;
+}
+
+.cardDetailsRow {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  background: linear-gradient(
+    90deg,
+    rgb(177, 177, 177) 0%,
+    rgb(122, 122, 122) 35%,
+    rgb(79, 79, 79) 100%
+  );
+  color: white;
+  padding: 6px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 768px) {
+  .modal {
+    max-width: 300px;
+    width: 100%;
+    position: relative;
+  }
+
+  .modalContent {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

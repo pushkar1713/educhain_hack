@@ -1,0 +1,21 @@
+.searchPageContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: rgb(255, 255, 255);
+}
+
+.searchPageContainer form {
+  margin-top: 16px;
+  width: 90vw;
+  display: flex;
+  gap: 20px;
+}
+
+.pageButtons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}

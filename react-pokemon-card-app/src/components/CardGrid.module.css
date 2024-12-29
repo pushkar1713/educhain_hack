@@ -1,0 +1,62 @@
+.CardGrid {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 260px);
+  justify-content: center;
+  gap: 12px;
+  padding: 64px 36px;
+  overflow: hidden;
+  position: relative;
+}
+
+.cardImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 335px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.cardText {
+  color: black;
+  font-size: 16px;
+  margin-top: 20px;
+}
+
+.cardContainer {
+  border: 1px solid rgb(243, 243, 243);
+  border-radius: 8px;
+  padding: 8px;
+}
+
+.cardGridLoading {
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.cardNoResult {
+  color: black;
+}
+
+.cardAddIcon {
+  color: black;
+  text-align: right;
+  cursor: pointer;
+  font-size: 25px;
+}
+
+.cardDescription {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+}
+
+@media (max-width: 768px) {
+  .CardGrid {
+    padding: 0;
+  }
+}

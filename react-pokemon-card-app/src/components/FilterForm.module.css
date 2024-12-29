@@ -1,0 +1,79 @@
+.filterForm {
+  gap: 4px;
+  margin: 16px;
+  color: black;
+  font-size: 16px;
+}
+
+.filterForm input,
+select {
+  background-color: white;
+  border: 1px solid black;
+  border-radius: 4px;
+  height: 32px;
+  color: black;
+  font-size: 16px;
+}
+
+.filterForm button {
+  color: white;
+  border-radius: 4px;
+  margin-top: 16px;
+}
+
+.filterForm label {
+  margin-top: 8px;
+}
+
+.filterTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 20px;
+}
+
+.filterIcon {
+  font-size: 24px;
+  color: black;
+}
+/* FilterForm.module.css */
+
+.hamburger {
+  display: none;
+  font-size: 24px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.filterTitle {
+  display: flex;
+  align-items: center;
+}
+
+#filterIcon {
+  margin-right: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+  .filterForm {
+    display: none;
+    position: absolute;
+    top: 60%;
+    left: 0;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    z-index: 10;
+    width: 300px;
+  }
+
+  .filterForm.show {
+    display: flex;
+  }
+}

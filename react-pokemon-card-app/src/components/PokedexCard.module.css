@@ -1,0 +1,23 @@
+.PokedexCardContainer {
+  display: flex;
+  border: 1px solid lightgrey;
+  width: 100%;
+}
+
+.pokedexCard {
+  display: flex;
+  justify-content: space-between;
+}
+
+.pokedexTitle {
+  display: flex;
+  flex-direction: column;
+}
+
+.pokedexType {
+  display: flex;
+}
+
+.pokedexCardImg {
+  width: 200px;
+}
